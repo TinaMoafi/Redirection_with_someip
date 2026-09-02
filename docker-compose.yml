@@ -1,0 +1,41 @@
+services:
+  lidar-node:
+    build:
+      context: ./pointcloud_redirection
+      dockerfile: docker/lidar-node.Dockerfile
+    container_name: lidar-node
+    cap_add:
+      - NET_ADMIN
+    networks:
+      sdv-net:
+        ipv4_address: 172.31.0.10
+    environment:
+      VSOMEIP_CONFIGURATION: /app/config/vsomeip/adapter-container.json
+      LD_LIBRARY_PATH: /usr/local/lib
+    volumes:
+      - ./pointcloud_redirection/logs:/app/logs
+    command: sleep infinity
+  middleware-node:
+    build:
+      context: ./middleware
+      dockerfile: docker/middleware-node.Dockerfile
+    container_name: middleware-node
+    networks:
+      sdv-net:
+        ipv4_address: 172.31.0.20
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      LD_LIBRARY_PATH: /usr/local/lib
+      VSOMEIP_CONFIGURATION: /app/configs/vsomeip/middleware-container.json
+    volumes:
+      - ./middleware/logs:/app/logs
+    command: sleep infinity
+networks:
+  sdv-net:
+    name: sdv-net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.0.0/24
