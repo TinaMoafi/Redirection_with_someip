@@ -52,7 +52,7 @@ The containers represent two logically separate SDV nodes.
         v                                                 v
 
 ┌──────────────────────┐                    ┌──────────────────────┐
-│      lidar-node      │                    │   middleware-node     │
+│      lidar-node      │                    │   middleware-node    │
 │      172.31.0.10     │                    │      172.31.0.20     │
 │                      │                    │                      │
 │  LiDAR emulator      │                    │  Eclipse S-CORE      │
@@ -60,13 +60,12 @@ The containers represent two logically separate SDV nodes.
 │        v             │                    │  someipd             │
 │  LiDAR adapter       │                    │      │               │
 │        │             │                    │      v               │
-│        v             │                    │  gatewayd             │
+│        v             │                    │  gatewayd            │
 │  vSomeIP provider    │                    │      │               │
-│                      │                    │      │ S-CORE IPC     │
+│                      │                    │      │ S-CORE IPC    │
 └──────────┬───────────┘                    │      v               │
-           │                                │  Rust visualizer     │
-           │ SOME/IP                        │                      │
-           └────────────────────────────────>│                      │
+           │ SOME/IP                        │  Rust visualizer     │
+           └───────────────────────────────>│                      |
                                             └──────────────────────┘
 ```
 
@@ -578,96 +577,4 @@ docs/known_issues.md
 docs/roadmap.md
 ```
 
----
 
-# 14. Verification status
-
-| Stage | Status |
-|---|---|
-| Two-node architecture | PASS |
-| Docker networking | PASS |
-| LiDAR container | PASS |
-| Middleware container | PASS |
-| LiDAR emulator | PASS |
-| LiDAR adapter | PASS |
-| SOME/IP provider | PASS |
-| SOME/IP Service Discovery | PASS |
-| SOME/IP subscription | PASS |
-| `someipd` reception | PASS |
-| `gatewayd` forwarding | PASS |
-| S-CORE IPC | PASS |
-| Rust visualizer reception | PASS |
-| Final LiDAR payload interpretation | IN PROGRESS |
-
----
-
-# 15. Next development stage
-
-This repository is a verification baseline.
-
-The next stage should move from simulated components toward real SDV microservices and a defined LiDAR data model.
-
-The main development steps are:
-
-```text
-Current prototype
-       |
-       v
-Define LiDAR payload schema
-       |
-       v
-Implement serialization
-       |
-       v
-Implement deserialization
-       |
-       v
-Validate point-cloud integrity
-       |
-       v
-Replace simulation with real microservices
-       |
-       v
-Performance testing
-       |
-       v
-Distributed/multi-node deployment
-       |
-       v
-Fault handling and production hardening
-```
-
-See:
-
-```text
-docs/roadmap.md
-```
-
----
-
-# 16. Important implementation notes
-
-The Docker containers use fixed internal IP addresses:
-
-```text
-lidar-node       172.31.0.10
-middleware-node  172.31.0.20
-```
-
-These addresses belong to the Docker network and are not required to exist on the host PC.
-
-The Docker network uses:
-
-```text
-172.31.0.0/24
-```
-
-The LiDAR and middleware containers require the appropriate network capabilities for multicast routing.
-
-The prototype also requires cleanup of stale SOME/IP and S-CORE runtime state when restarting components manually.
-
-For the complete procedure, see:
-
-```text
-docs/test_procedure.md
-```
